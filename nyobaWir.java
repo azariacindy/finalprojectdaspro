@@ -64,8 +64,9 @@ public class nyobaWir {
             totalPrice -= totalPrice * discount; // Diskon 10% untuk member
         }
 
-        // Menampilkan total harga
-        System.out.println("Total Price: Rp." + totalPrice);
+        // Menampilkan total harga 
+        String itemFormat = String.format("Total Price RP.%,8.0f", totalPrice) ;
+        System.out.println(itemFormat);
 
         // Input uang pelanggan
         System.out.print("Enter the amount of money from the customer: Rp. ");
