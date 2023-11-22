@@ -65,7 +65,8 @@ public class nyobaWir {
         }
 
         // Menampilkan total harga
-        System.out.println("Total Price: Rp." + totalPrice);
+        String itemFormat = String.format("Total Price RP.%,8.0f", totalPrice) ;
+        System.out.println(itemFormat);
 
         // Input uang pelanggan
         System.out.print("Enter the amount of money from the customer: Rp. ");
