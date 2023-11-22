@@ -19,7 +19,7 @@ public class nyobaWir {
         // For untuk mendeklarasi menggunakan tipe data apa dan inisialisasi
         for (int i = 0; i < productList.length; i++) {
             String itemFormat = "%2d. %-20s  Rp.%,8.0f";
-            System.out.println(String.format(itemFormat, i + 1, productList[i], productPrice[i]));
+            System.out.println(String.format(itemFormat, i , productList[i], productPrice[i]));
         }
 
         // List untuk menyimpan barang yang akan dibeli
