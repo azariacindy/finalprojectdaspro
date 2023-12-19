@@ -92,14 +92,14 @@ public class nyobaWir {
                     makeTransaction(currentUser);
                     break;
                 case 3:
-                    manageMemberData();
-                    break;
-                case 4:
                     if ("ADMIN".equals(currentUser.userType)) {
-                        displayItemQuantities(products);
+                        manageMemberData();
                     } else {
                         System.out.println("Access denied. Admin privilege required.");
                     }
+                    break;
+                case 4:
+                    displayItemQuantities(products);
                     break;
                 case 5:
                     if ("ADMIN".equals(currentUser.userType)) {
@@ -142,7 +142,7 @@ public class nyobaWir {
         System.out.println("1. Display List of Items");
         System.out.println("2. Make a Transaction");
         System.out.println("3. Manage Member Data");
-        System.out.println("4. Display List and Quantity of Items");
+        System.out.println("4. Stock of Items in Display");
         System.out.println("5. Manage Display Stock");
         System.out.println("6. Exit");
         System.out.print("Select menu: ");
@@ -217,7 +217,7 @@ public class nyobaWir {
     }
 
     static Order[] recordOrders(Product[] products) {
-        System.out.println("Record your orders (enter 0 to finish):");
+        System.out.println("------------- Record your orders -------------");
         
         Order[] orderArray = new Order[0]; // Dynamic array to store orders
     
@@ -366,17 +366,18 @@ public class nyobaWir {
 
     private static void updateMember() {
         System.out.print("Enter member ID to update: ");
-        String memberId = scanner.nextLine();
-
+        int memberId = scanner.nextInt();
+        scanner.nextLine(); // Consume the newline character
+    
         Member memberToUpdate = findMember(memberId);
-
+    
         if (memberToUpdate != null) {
             System.out.print("Enter new member name: ");
             String newMemberName = scanner.nextLine();
-
+    
             // Update the existing member
             memberToUpdate.memberName = newMemberName;
-
+    
             System.out.println("Member updated successfully.");
         } else {
             System.out.println("Member not found.");
