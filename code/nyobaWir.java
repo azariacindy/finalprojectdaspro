@@ -112,11 +112,11 @@ public class nyobaWir {
                     System.out.println("----------------------------------------------");
                     System.out.println("||                  RECEIPT                 ||");
                     System.out.println("----------------------------------------------");
-                    for (Order order : orders) {
+                    for (Order order : recordOrders(null)) {
                         System.out.printf("%-20s   %d   Rp%,8.0f%n", order.productName, order.quantity,
                                 getPriceByProductName(order.productName) * order.quantity);
                     }
-                    System.out.printf("Total Price: Rp%,.0f%n", totalPrice);
+                    System.out.printf("Total Price: Rp%,.0f%n", calculateTotalPrice(null));
                     System.out.println("Exiting. Thank you!");
 
                     break;
