@@ -1,5 +1,5 @@
-import java.util.Arrays;
-import java.util.Scanner;
+import java.util.Arrays; // import arrays
+import java.util.Scanner; // import scanner
 
 public class nyobaWir {
 
@@ -71,9 +71,9 @@ public class nyobaWir {
     static double discount = 0.1;
 
     public static void main(String[] args) {
-        System.out.println("-------------------------------");
-        System.out.println("-    WELCOME TO OLI MARKET    -");
-        System.out.println("-------------------------------");
+        System.out.println("----------------------------------------------");
+        System.out.println("||          WELCOME TO OLI MARKET           ||");
+        System.out.println("----------------------------------------------");
 
         User currentUser = login();
 
@@ -109,7 +109,16 @@ public class nyobaWir {
                     }
                     break;
                 case 6:
+                    System.out.println("----------------------------------------------");
+                    System.out.println("||                  RECEIPT                 ||");
+                    System.out.println("----------------------------------------------");
+                    for (Order order : orders) {
+                        System.out.printf("%-20s   %d   Rp%,8.0f%n", order.productName, order.quantity,
+                                getPriceByProductName(order.productName) * order.quantity);
+                    }
+                    System.out.printf("Total Price: Rp%,.0f%n", totalPrice);
                     System.out.println("Exiting. Thank you!");
+
                     break;
                 default:
                     System.out.println("Invalid menu choice. Please try again.");
@@ -139,33 +148,37 @@ public class nyobaWir {
     }
 
     static void displayMenu(User user) {
-        System.out.println("1. Display List of Items");
-        System.out.println("2. Make a Transaction");
-        System.out.println("3. Manage Member Data");
-        System.out.println("4. Stock of Items in Display");
-        System.out.println("5. Manage Display Stock");
-        System.out.println("6. Exit");
+        System.out.println("----------------------------------------------");
+        System.out.println("|| 1. Display List of Items                 ||");
+        System.out.println("|| 2. Make a Transaction                    ||");
+        System.out.println("|| 3. Manage Member Data                    ||");
+        System.out.println("|| 4. Stock of Items in Display             ||");
+        System.out.println("|| 5. Manage Display Stock                  ||");
+        System.out.println("|| 6. Exit                                  ||");
+        System.out.println("----------------------------------------------");
         System.out.print("Select menu: ");
     }
 
     static void displayItemList(Product[] products) {
-        System.out.println("List of Products:");
         System.out.println("----------------------------------------------");
-        System.out.printf("%-5s %-20s %8s%n", "Code", "Product Name", "Price");
+        System.out.println("||            List of Products:             ||");
+        System.out.println("----------------------------------------------");
+        System.out.printf("%-7s %-20s %8s%n", "Code", "Product Name", "Price");
         for (int i = 0; i < products.length; i++) {
-            System.out.printf("%-5d %-20s Rp%,8.0f%n", i + 1, products[i].name, products[i].price);
+            System.out.printf("%-7d %-20s Rp%,8.0f%n", i + 1, products[i].name, products[i].price);
         }
         System.out.println("----------------------------------------------");
     }
 
     static void displayItemQuantities(Product[] products) {
-        System.out.println("List of Products and Quantities:");
-        System.out.println("----------------------------------");
-        System.out.printf("%-20s %-10s%n", "Product Name", "Quantity");
-        for (Product product : products) {
-            System.out.printf("%-20s %-10d%n", product.name, product.quantity);
+        System.out.println("----------------------------------------------");
+        System.out.println("||     List of Products and Quantities:     ||");
+        System.out.println("----------------------------------------------");
+        System.out.printf("%-7s %-20s %-10s%n", "Code", "Product Name", "Quantity");
+        for (int i = 0; i < products.length; i++) {
+            System.out.printf("%-7d %-20s %-10d%n", i + 1, products[i].name, products[i].quantity);
         }
-        System.out.println("----------------------------------");
+        System.out.println("----------------------------------------------");
     }
 
     static void manageProductStock(Product[] products) {
@@ -180,12 +193,14 @@ public class nyobaWir {
                 System.out.println();
                 products[productCode - 1].quantity += newQuantity;
             } else {
-                System.out.println("Invalid item code!");
+                System.out.println("----------------------------------------------");
+                System.out.println("||            Invalid item code!            ||");
+                System.out.println("----------------------------------------------");
             }
 
             displayItemQuantities(products);
 
-            System.out.print("Enter the item code to update quantity (enter 0 to finish): ");
+            System.out.print("Enter the item code to update quantity: ");
             productCode = scanner.nextInt();
         }
     }
@@ -202,13 +217,11 @@ public class nyobaWir {
 
         double totalPrice = calculateTotalPrice(orders);
 
-        if ("CASHIER".equals(currentUser.userType)) {
             boolean isMember = checkMembershipCard();
             if (isMember) {
                 totalPrice -= totalPrice * discount;
                 System.out.println("Member discount applied!");
             }
-        }
 
         displayReceipt(orders, totalPrice);
         updateStock(products, orders);
@@ -217,9 +230,10 @@ public class nyobaWir {
     }
 
     static Order[] recordOrders(Product[] products) {
-        System.out.println("------------- Record your orders -------------");
+        System.out.println("||            Record your orders            ||");
+        System.out.println("----------------------------------------------");
         
-        Order[] orderArray = new Order[0]; // Dynamic array to store orders
+        Order[] orderArray = new Order[0]; // Dynamic 2array to store orders
     
         int productCode;
         int orderIndex = 0;
@@ -241,7 +255,9 @@ public class nyobaWir {
             } else if (productCode == 0) {
                 break;
             } else {
-                System.out.println("Invalid item code!");
+                System.out.println("----------------------------------------------");
+                System.out.println("||            Invalid item code!            ||");
+                System.out.println("----------------------------------------------");
             }
         } while (true);
     
@@ -249,6 +265,7 @@ public class nyobaWir {
     }    
 
     static boolean checkMembershipCard() {
+        System.out.println("----------------------------------------------");
         System.out.print("Do you have a membership card? (y/n): ");
         String memberResponse = scanner.next();
         return memberResponse.equalsIgnoreCase("y");
@@ -272,16 +289,16 @@ public class nyobaWir {
     }
 
     static void displayReceipt(Order[] orders, double totalPrice) {
-        System.out.println("------------------------------");
-        System.out.println("            RECEIPT           ");
-        System.out.println("------------------------------");
-        for (Order order : orders) {
+        System.out.println("----------------------------------------------");
+        System.out.println("||                  RECEIPT                 ||");
+        System.out.println("----------------------------------------------");
+        for (Order order : orders) { 
             System.out.printf("%-20s   %d   Rp%,8.0f%n", order.productName, order.quantity,
                     getPriceByProductName(order.productName) * order.quantity);
         }
-        System.out.println("------------------------------");
+        System.out.println("----------------------------------------------");
         System.out.printf("Total Price: Rp%,.0f%n", totalPrice);
-        System.out.println("------------------------------");
+        System.out.println("----------------------------------------------");
     }
 
     static double handlePayment(double totalPrice) {
@@ -323,11 +340,13 @@ public class nyobaWir {
     }
 
     private static void manageMemberData() {
-        System.out.println("1. View Members");
-        System.out.println("2. Update Member");
-        System.out.println("3. Delete Member");
-        System.out.println("4. Back to Main Menu");
-        System.out.print("Select option: ");
+        System.out.println("----------------------------------------------");
+        System.out.println("|| 1. View Members                          ||");
+        System.out.println("|| 2. Update Member                         ||");
+        System.out.println("|| 3. Delete Member                         ||");
+        System.out.println("|| 4. Back to Main Menu                     ||");
+        System.out.println("----------------------------------------------");
+        System.out.print("|| Select option: ");
 
         int option = scanner.nextInt();
         scanner.nextLine();
@@ -348,20 +367,22 @@ public class nyobaWir {
             case 4:
                 break;
             default:
-                System.out.println("Invalid option. Please try again.");
+                System.out.println("----------------------------------------------");
+                System.out.println("||    Invalid option. Please try again.     ||");
+                System.out.println("----------------------------------------------");
                 break;
         }
     }
 
     private static void viewMembers() {
-        System.out.println("List of Members:");
+        System.out.println("----------------------------------------------");
+        System.out.println("||              List of Members:            ||");
         System.out.println("----------------------------------------------");
         System.out.printf("%-5s %-20s%n", "Id", "Member Name");
         for (Member member : members) {
             System.out.printf("%-5d %-20s%n", member.memberId, member.memberName);
         }
         System.out.println("----------------------------------------------");
-        System.out.println("------------------------------");
     }    
 
     private static void updateMember() {
@@ -378,9 +399,13 @@ public class nyobaWir {
             // Update the existing member
             memberToUpdate.memberName = newMemberName;
     
-            System.out.println("Member updated successfully.");
+            System.out.println("----------------------------------------------");
+            System.out.println("||       Member updated successfully.       ||");
+            System.out.println("----------------------------------------------");
         } else {
-            System.out.println("Member not found.");
+            System.out.println("----------------------------------------------");
+            System.out.println("||             Member not found.            ||");
+            System.out.println("----------------------------------------------");
         }
     }
 
@@ -397,9 +422,13 @@ public class nyobaWir {
                 }
             }
             members = newMembers;
-            System.out.println("Member deleted successfully.");
+            System.out.println("----------------------------------------------");
+            System.out.println("||       Member deleted successfully.       ||");
+            System.out.println("----------------------------------------------");
         } else {
-            System.out.println("Member not found.");
+            System.out.println("----------------------------------------------");
+            System.out.println("||             Member not found.            ||");
+            System.out.println("----------------------------------------------");
         }
     }    
 
