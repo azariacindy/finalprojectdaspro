@@ -5,15 +5,18 @@ public class nyobaWir {
 
     static Scanner scanner = new Scanner(System.in);
 
-    static class Product {
+    // mendefinisikan class product dengan atribut name, price, quantity
+    static class Product { 
         String name;
         double price;
         int quantity;
 
-        Product(String name, double price, int quantity) {
+        // menginisialisasi atribut dengan nilai yang sudah didefinisikan sebelumnya
+        Product(String name, double price, int quantity) { 
             this.name = name;
             this.price = price;
-            this.quantity = quantity;
+            this.quantity = quantity; 
+            // untuk mengatur/menginisialisasi nilai atribut quantity
         }
     }
 
@@ -49,6 +52,7 @@ public class nyobaWir {
         }
     }
 
+    // mendeklarasi dan inisialisasi array
     static User[] users = {
             new User("cashier", "cashier123", "CASHIER"),
             new User("admin", "admin123", "ADMIN")
@@ -58,18 +62,20 @@ public class nyobaWir {
     static Product[] products = {
             new Product("Detil", 18000, 20),
             new Product("Pintane", 20000, 20),
-            new Product("Emerin", 10000, 20),
+            new Product("Emerin", 10000, 20)
             // Add other products
     };
 
     static Member[] members = {
             new Member(101, "Adele"),
             new Member(102, "Taylor Swift"),
+            new Member(103, "Olivia Rodrigo")
             // Add other members
     };
 
     static double discount = 0.1;
 
+    // dapat diakses dari mana saja
     public static void main(String[] args) {
         System.out.println("----------------------------------------------");
         System.out.println("||          WELCOME TO OLI MARKET           ||");
@@ -112,11 +118,11 @@ public class nyobaWir {
                     System.out.println("----------------------------------------------");
                     System.out.println("||                  RECEIPT                 ||");
                     System.out.println("----------------------------------------------");
-                    for (Order order : orders) {
+                    for (Order order : recordOrders(null)) {
                         System.out.printf("%-20s   %d   Rp%,8.0f%n", order.productName, order.quantity,
                                 getPriceByProductName(order.productName) * order.quantity);
                     }
-                    System.out.printf("Total Price: Rp%,.0f%n", totalPrice);
+                    System.out.printf("Total Price: Rp%,8.0f%n", calculateTotalPrice(null));
                     System.out.println("Exiting. Thank you!");
 
                     break;
@@ -128,14 +134,15 @@ public class nyobaWir {
         scanner.close();
     }
 
+    // dapat diakses tanpa membuat objek dari kelas yang sesuai
     static User login() {
         System.out.print("Enter username: ");
-        String username = scanner.nextLine();
+        String username = scanner.nextLine(); // input username
 
         System.out.print("Enter password: ");
-        String password = scanner.nextLine();
+        String password = scanner.nextLine(); // input password
 
-        for (User user : users) {
+        for (User user : users) { // menggunakan for each loop untuk memeriksa objek User dalam array user
             if (user.username.equals(username) && user.password.equals(password)) {
                 System.out.println("Login successful. Welcome, " + user.userType + "!");
                 return user;
@@ -147,6 +154,7 @@ public class nyobaWir {
         return null;
     }
 
+    // void tidak bisa return data, jika dipanggil ke main fungsi dengan void hanya melakukan perintah
     static void displayMenu(User user) {
         System.out.println("----------------------------------------------");
         System.out.println("|| 1. Display List of Items                 ||");
@@ -182,27 +190,59 @@ public class nyobaWir {
     }
 
     static void manageProductStock(Product[] products) {
-        displayItemQuantities(products);
-        System.out.print("Enter the item code to update quantity (enter 0 to finish): ");
-        int productCode = scanner.nextInt();
-
-        while (productCode != 0) {
-            if (productCode > 0 && productCode <= products.length) {
-                System.out.print("Enter the new quantity of items: ");
-                int newQuantity = scanner.nextInt();
-                System.out.println();
-                products[productCode - 1].quantity += newQuantity;
-            } else {
-                System.out.println("----------------------------------------------");
-                System.out.println("||            Invalid item code!            ||");
-                System.out.println("----------------------------------------------");
-            }
-
+        boolean exitingManageStock = false;
+    
+        do {
             displayItemQuantities(products);
+            System.out.print("Enter the item code to update quantity (enter 0 to finish): ");
+            int productCode = scanner.nextInt();
+    
+            while (productCode != 0) {
+                if (productCode > 0 && productCode <= products.length) {
+                    System.out.print("Enter the new quantity of items: ");
+                    int newQuantity = scanner.nextInt();
+                    System.out.println();
+                    products[productCode - 1].quantity += newQuantity;
+                } else {
+                    System.out.println("----------------------------------------------");
+                    System.out.println("||            Invalid item code!            ||");
+                    System.out.println("----------------------------------------------");
+                }
+    
+                displayItemQuantities(products);
+    
+                System.out.print("Enter the item code to update quantity (enter 0 to finish): ");
+                productCode = scanner.nextInt();
+            }
+    
+            System.out.print("Do you want to return to the main menu? (1 for yes, 0 for no): ");
+            int returnToMainMenu = scanner.nextInt();
+            if (returnToMainMenu == 1) {
+                exitingManageStock = true;
+            } else if (returnToMainMenu == 0) {
+                exitingManageStock = false;
+                System.out.println("Returning to the main menu...");
+            } else {
+                System.out.println("Invalid choice. Returning to the main menu...");
+                exitingManageStock = false;
+            }
+    
+        } while (exitingManageStock);
+    }    
 
-            System.out.print("Enter the item code to update quantity: ");
-            productCode = scanner.nextInt();
+    static void updateStock(Product[] products, Order[] orders) {
+        for (Order order : orders) {
+          if (order.quantity != 0) {
+              for (Product product : products) {
+                  if (product.name.equals(order.productName)) {
+                      product.quantity -= order.quantity;
+                      break;
+                  }
+              }
+          }
         }
+        
+        System.out.println("Stock updated successfully.");
     }
 
     static void makeTransaction(User currentUser) {
@@ -229,6 +269,7 @@ public class nyobaWir {
         double change = handlePayment(totalPrice);
     }
 
+    // static dengan parameter ada inisialisasi didalamnya
     static Order[] recordOrders(Product[] products) {
         System.out.println("||            Record your orders            ||");
         System.out.println("----------------------------------------------");
@@ -264,6 +305,7 @@ public class nyobaWir {
         return orderArray;
     }    
 
+    // static tanpa parameter tidak memerlukan informasi tambahan dari luar
     static boolean checkMembershipCard() {
         System.out.println("----------------------------------------------");
         System.out.print("Do you have a membership card? (y/n): ");
@@ -324,21 +366,7 @@ public class nyobaWir {
                 .orElse(0.0);
     }
 
-    static void updateStock(Product[] products, Order[] orders) {
-        for (Order order : orders) {
-          if (order.quantity != 0) {
-              for (Product product : products) {
-                  if (product.name.equals(order.productName)) {
-                      product.quantity -= order.quantity;
-                      break;
-                  }
-              }
-          }
-        }
-        
-        System.out.println("Stock updated successfully.");
-    }
-
+    //private tidak dapat diakses dari luar kelas
     private static void manageMemberData() {
         System.out.println("----------------------------------------------");
         System.out.println("|| 1. View Members                          ||");
@@ -346,7 +374,7 @@ public class nyobaWir {
         System.out.println("|| 3. Delete Member                         ||");
         System.out.println("|| 4. Back to Main Menu                     ||");
         System.out.println("----------------------------------------------");
-        System.out.print("|| Select option: ");
+        System.out.print("Select option: ");
 
         int option = scanner.nextInt();
         scanner.nextLine();
