@@ -5,8 +5,7 @@ public class nyobaWir {
 
     static Scanner scanner = new Scanner(System.in);
 
-    // mendefinisikan class product dengan atribut name, price, quantity
-    static class Product { 
+    static class Product { // mendefinisikan class product dengan atribut name, price, quantity
         String name;
         double price;
         int quantity;
@@ -16,6 +15,7 @@ public class nyobaWir {
             this.name = name;
             this.price = price;
             this.quantity = quantity; 
+            // 'this' membantu menjelaskan bahwa kita merujuk pada atribut class, bukan variabel local
             // untuk mengatur/menginisialisasi nilai atribut quantity
         }
     }
@@ -73,23 +73,49 @@ public class nyobaWir {
             // Add other members
     };
 
-    static double discount = 0.1;
+    static double discount = 0.1; // diskon defaultnya 10% / 0.1
 
     // dapat diakses dari mana saja
     public static void main(String[] args) {
         System.out.println("----------------------------------------------");
         System.out.println("||          WELCOME TO OLI MARKET           ||");
         System.out.println("----------------------------------------------");
-
+    
         User currentUser = login();
+    
+        mainMenu(currentUser); // Panggil mainMenu dengan currentUser sebagai parameter
+    
+        scanner.close();
+    }    
 
+    // dapat diakses tanpa membuat objek dari kelas yang sesuai
+    static User login() {
+        System.out.print("Enter username: ");
+        String username = scanner.nextLine(); // input username
+
+        System.out.print("Enter password: ");
+        String password = scanner.nextLine(); // input password
+
+        for (User user : users) { // menggunakan for each loop untuk memeriksa objek User dalam array user
+            if (user.username.equals(username) && user.password.equals(password)) {
+                System.out.println("Login successful. Welcome, " + user.userType + "!");
+                return user;
+            }
+        }
+
+        System.out.println("Login failed. Invalid credentials.");
+        System.exit(0); // keluar dari fungsi jika status 0(sukses)
+        return null; // jika login gagal maka mengembalikan nilai null
+    }
+
+    static void mainMenu(User currentUser) {
         int menuChoice;
-
+    
         do {
             displayMenu(currentUser);
             menuChoice = scanner.nextInt();
             scanner.nextLine(); // Consume the newline character
-
+    
             switch (menuChoice) {
                 case 1:
                     displayItemList(products);
@@ -109,50 +135,19 @@ public class nyobaWir {
                     break;
                 case 5:
                     if ("ADMIN".equals(currentUser.userType)) {
-                        manageProductStock(products);
+                        manageProductStock(products, currentUser);
                     } else {
                         System.out.println("Access denied. Admin privilege required.");
                     }
                     break;
                 case 6:
-                    System.out.println("----------------------------------------------");
-                    System.out.println("||                  RECEIPT                 ||");
-                    System.out.println("----------------------------------------------");
-                    for (Order order : recordOrders(null)) {
-                        System.out.printf("%-20s   %d   Rp%,8.0f%n", order.productName, order.quantity,
-                                getPriceByProductName(order.productName) * order.quantity);
-                    }
-                    System.out.printf("Total Price: Rp%,8.0f%n", calculateTotalPrice(null));
-                    System.out.println("Exiting. Thank you!");
-
+                    System.out.println("Thanks For Comming!");
                     break;
                 default:
                     System.out.println("Invalid menu choice. Please try again.");
             }
-        } while (menuChoice != 5);
-
-        scanner.close();
-    }
-
-    // dapat diakses tanpa membuat objek dari kelas yang sesuai
-    static User login() {
-        System.out.print("Enter username: ");
-        String username = scanner.nextLine(); // input username
-
-        System.out.print("Enter password: ");
-        String password = scanner.nextLine(); // input password
-
-        for (User user : users) { // menggunakan for each loop untuk memeriksa objek User dalam array user
-            if (user.username.equals(username) && user.password.equals(password)) {
-                System.out.println("Login successful. Welcome, " + user.userType + "!");
-                return user;
-            }
-        }
-
-        System.out.println("Login failed. Invalid credentials.");
-        System.exit(0);
-        return null;
-    }
+        } while (menuChoice != 6);
+    }    
 
     // void tidak bisa return data, jika dipanggil ke main fungsi dengan void hanya melakukan perintah
     static void displayMenu(User user) {
@@ -172,7 +167,7 @@ public class nyobaWir {
         System.out.println("||            List of Products:             ||");
         System.out.println("----------------------------------------------");
         System.out.printf("%-7s %-20s %8s%n", "Code", "Product Name", "Price");
-        for (int i = 0; i < products.length; i++) {
+        for (int i = 0; i < products.length; i++) { 
             System.out.printf("%-7d %-20s Rp%,8.0f%n", i + 1, products[i].name, products[i].price);
         }
         System.out.println("----------------------------------------------");
@@ -189,45 +184,52 @@ public class nyobaWir {
         System.out.println("----------------------------------------------");
     }
 
-    static void manageProductStock(Product[] products) {
+    static void manageProductStock(Product[] products, User currentUser) {
         boolean exitingManageStock = false;
     
         do {
             displayItemQuantities(products);
-            System.out.print("Enter the item code to update quantity (enter 0 to finish): ");
-            int productCode = scanner.nextInt();
+            System.out.println("Options:");
+            System.out.println("1. Update Stock");
+            System.out.println("0. Back to Main Menu");
     
-            while (productCode != 0) {
-                if (productCode > 0 && productCode <= products.length) {
-                    System.out.print("Enter the new quantity of items: ");
-                    int newQuantity = scanner.nextInt();
-                    System.out.println();
-                    products[productCode - 1].quantity += newQuantity;
-                } else {
-                    System.out.println("----------------------------------------------");
-                    System.out.println("||            Invalid item code!            ||");
-                    System.out.println("----------------------------------------------");
-                }
+            System.out.print("Enter your choice: ");
+            int choice = scanner.nextInt();
     
-                displayItemQuantities(products);
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter the item code to update quantity (enter 0 to finish): ");
+                    int productCode = scanner.nextInt();
     
-                System.out.print("Enter the item code to update quantity (enter 0 to finish): ");
-                productCode = scanner.nextInt();
+                    while (productCode != 0) {
+                        if (productCode > 0 && productCode <= products.length) {
+                            System.out.print("Enter the new quantity of items: ");
+                            int newQuantity = scanner.nextInt();
+                            System.out.println();
+                            products[productCode - 1].quantity += newQuantity;
+                        } else {
+                            System.out.println("----------------------------------------------");
+                            System.out.println("||            Invalid item code!            ||");
+                            System.out.println("----------------------------------------------");
+                        }
+    
+                        displayItemQuantities(products);
+    
+                        System.out.print("Enter the item code to update quantity (enter 0 to finish): ");
+                        productCode = scanner.nextInt();
+                    }
+    
+                    break;
+                case 0:
+                    exitingManageStock = true;
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
             }
+        } while (!exitingManageStock);
     
-            System.out.print("Do you want to return to the main menu? (1 for yes, 0 for no): ");
-            int returnToMainMenu = scanner.nextInt();
-            if (returnToMainMenu == 1) {
-                exitingManageStock = true;
-            } else if (returnToMainMenu == 0) {
-                exitingManageStock = false;
-                System.out.println("Returning to the main menu...");
-            } else {
-                System.out.println("Invalid choice. Returning to the main menu...");
-                exitingManageStock = false;
-            }
-    
-        } while (exitingManageStock);
+        // Setelah selesai mengelola stok produk, kembali ke menu utama
+        mainMenu(currentUser);
     }    
 
     static void updateStock(Product[] products, Order[] orders) {
@@ -246,28 +248,41 @@ public class nyobaWir {
     }
 
     static void makeTransaction(User currentUser) {
-
         displayItemList(products);
         Order[] orders = recordOrders(products);
-
+    
         if (orders.length == 0) {
             System.out.println("No items selected. Exiting transaction.");
             return;
         }
-
-        double totalPrice = calculateTotalPrice(orders);
-
+    
+        System.out.print("Enter discount percentage (0-100): ");
+        int discountPercentage = scanner.nextInt();
+    
+        if (discountPercentage >= 0 && discountPercentage <= 100) {
+            double discountRate = discountPercentage / 100.0;
+            double totalPrice = calculateTotalPrice(orders);
+    
             boolean isMember = checkMembershipCard();
             if (isMember) {
-                totalPrice -= totalPrice * discount;
-                System.out.println("Member discount applied!");
+                double discountAmount = totalPrice * discountRate;
+                double discountedPrice = totalPrice - discountAmount;
+                System.out.println("Discount applied: " + discountPercentage + "%");
+                System.out.printf("Discounted Amount: Rp%,.0f%n", discountAmount);
+                System.out.printf("Total Price after Discount: Rp%,.0f%n", discountedPrice);
+                displayReceipt(orders, discountedPrice);
+                updateStock(products, orders);
+    
+                double change = handlePayment(discountedPrice);
+            } else {
+                displayReceipt(orders, totalPrice);
+                updateStock(products, orders);
+                double change = handlePayment(totalPrice);
             }
-
-        displayReceipt(orders, totalPrice);
-        updateStock(products, orders);
-
-        double change = handlePayment(totalPrice);
-    }
+        } else {
+            System.out.println("Invalid discount percentage. Exiting transaction.");
+        }
+    }        
 
     // static dengan parameter ada inisialisasi didalamnya
     static Order[] recordOrders(Product[] products) {
@@ -359,11 +374,13 @@ public class nyobaWir {
     }
 
     static double getPriceByProductName(String productName) {
-        return Arrays.stream(products)
-                .filter(product -> product.name.equals(productName))
-                .findFirst()
-                .map(product -> product.price)
-                .orElse(0.0);
+        // stream digunakan untuk mengolah data secara fungsional
+        return Arrays.stream(products) 
+            // operasi filter yang digunakan untuk memeriksa setiap elemen produk dalam stream    
+            .filter(product -> product.name.equals(productName)) 
+                .findFirst() // mengambil elemen pertama yang memenuhi syarat (jika ada) dari stream
+                .map(product -> product.price) // mengambil harga produk
+                .orElse(0.0); // jika tidak berisi nilai (tidak ada produk yang memenuhi syarat), maka operasi ini akan mengembalikan nilai default 0.0.
     }
 
     //private tidak dapat diakses dari luar kelas
@@ -461,11 +478,11 @@ public class nyobaWir {
     }    
 
     private static Member findMember(int memberId) {
-        for (Member member : members) {
-            if (member.memberId == memberId) {
-                return member;
+        for (Member member : members) { // untuk mengiterasi melalui sebuah array members yang disimpan pada variabel member
+            if (member.memberId == memberId) { // memeriksa member.memberId sama dengan memberid yang di input
+                return member; 
             }
         }
-        return null;
+        return null; // jika memberId tidak sesuai maka return null
     }
 }  
